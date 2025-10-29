@@ -26,6 +26,7 @@
   }
   nav {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     background-color: #66bb6a;
     padding: 0.5rem;
@@ -108,6 +109,21 @@
     color: white;
     margin-top: 2rem;
   }
+  /* Added */
+  .info-box {
+    background-color: #f1f8e9;
+    border-left: 5px solid #2e7d32;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+  }
+  .links a {
+    display: block;
+    color: #2e7d32;
+    margin: 0.3rem 0;
+    text-decoration: none;
+  }
+  .links a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -122,6 +138,7 @@
   <button onclick="showSection('calculator')">⚗️ Calculator</button>
   <button onclick="showSection('simulator')">🧪 Simulator</button>
   <button onclick="showSection('quiz')">🧠 Quiz</button>
+  <button onclick="showSection('info')">🔬 STREAM Info</button>
   <button onclick="showSection('tips')">🌎 Eco Tips</button>
 </nav>
 
@@ -160,6 +177,46 @@
   <div class="progress-bar"><div class="progress" id="quizProgress"></div></div>
 </section>
 
+<!-- Added: STREAM Info Section -->
+<section id="info">
+  <h2>🔬 STREAM Connections</h2>
+  
+  <div class="info-box">
+    <h3>Science 🌱</h3>
+    <p>Green chemistry focuses on minimizing waste and using renewable materials. It connects chemistry with biology (biodegradable materials) and environmental science.</p>
+  </div>
+
+  <div class="info-box">
+    <h3>Technology 💻</h3>
+    <p>This app uses JavaScript to calculate data, simulate reactions, and make learning interactive—showing how tech helps scientists visualize real-world chemistry.</p>
+  </div>
+
+  <div class="info-box">
+    <h3>Reading & Research 📚</h3>
+    <p>Read and explore innovations in sustainable chemistry through these reliable sources:</p>
+    <div class="links">
+      <a href="https://www.epa.gov/greenchemistry" target="_blank">EPA Green Chemistry</a>
+      <a href="https://www.un.org/sustainabledevelopment/sustainable-consumption-production/" target="_blank">UN Sustainable Goals</a>
+      <a href="https://pubs.acs.org/journal/gc" target="_blank">Green Chemistry Journal (ACS)</a>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <h3>Engineering ⚙️</h3>
+    <p>Engineers design eco-friendly chemical reactors, solar-powered labs, and efficient processes that reduce emissions and energy use.</p>
+  </div>
+
+  <div class="info-box">
+    <h3>Art & Design 🎨</h3>
+    <p>Design plays a key role in sustainability! From app colors inspired by nature to infographics spreading awareness, creativity helps communicate science effectively.</p>
+  </div>
+
+  <div class="info-box">
+    <h3>Math 📊</h3>
+    <p>Math helps calculate reaction yields, carbon footprints, and efficiency. Try changing your energy/waste inputs in the calculator and observe the data change!</p>
+  </div>
+</section>
+
 <section id="tips">
   <h2>Eco Tips & Innovations</h2>
   <ul>
@@ -168,11 +225,13 @@
     <li>☀️ Harness solar energy for chemical synthesis.</li>
     <li>💧 Design biodegradable materials to reduce pollution.</li>
     <li>🌍 Support green chemistry education and awareness.</li>
+    <li>🚯 Reduce single-use plastics by choosing reusable lab materials.</li>
+    <li>🌡️ Use digital tools to model reactions before performing experiments.</li>
   </ul>
 </section>
 
 <footer>
-  © 2025 EcoChem Tracker | Designed for Chemistry Fair Projects
+  © 2025 EcoChem Tracker | A STREAM Innovation Project 🌿
 </footer>
 
 <script>
@@ -204,7 +263,9 @@
       "Ca+C": "🪨 You formed calcium carbide (CaC₂), used in lamps.",
       "H+Cl": "💨 You made hydrogen chloride (HCl), handle with care!",
       "S+O2": "🌋 You made sulfur dioxide (SO₂), a pollutant gas.",
-      "Mg+O": "✨ You made magnesium oxide (MgO), bright and white!"
+      "Mg+O": "✨ You made magnesium oxide (MgO), bright and white!",
+      "N+O": "⚡ You made nitrogen oxide (NO), formed in lightning!",
+      "H+S": "💭 You made hydrogen sulfide (H₂S), smells like rotten eggs!"
     };
     const key1 = `${e1}+${e2}`;
     const key2 = `${e2}+${e1}`;
@@ -221,7 +282,9 @@
     { question: "What is a biodegradable polymer?", answers: ["PLA", "PVC"], correct: 0 },
     { question: "Which process reduces waste?", answers: ["Catalysis", "Combustion"], correct: 0 },
     { question: "What is the main goal of recycling?", answers: ["Reduce resource use", "Increase waste"], correct: 0 },
-    { question: "Which of these is a renewable resource?", answers: ["Biomass", "Petroleum"], correct: 0 }
+    { question: "Which of these is a renewable resource?", answers: ["Biomass", "Petroleum"], correct: 0 },
+    { question: "Which metal is 100% recyclable?", answers: ["Aluminum", "Mercury"], correct: 0 },
+    { question: "What kind of reaction releases energy?", answers: ["Exothermic", "Endothermic"], correct: 0 }
   ];
 
   let currentQuestion = 0;
