@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>EcoChem Tracker</title>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-700: #2e7d32;
+    --green-400: #66bb6a;
+    --accent: #43a047;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom right, #a8e6cf, #dcedc1);
+    margin: 0;
+    padding: 0;
+    color: #222;
+  }
+
+  header {
+    background-color: var(--green-700);
+    color: white;
+    text-align: center;
+    padding: 1.25rem 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    animation: glow 3s ease-in-out infinite alternate;
+    letter-spacing: 1px;
+  }
+  header p { margin: 0.35rem 0 0; font-style: italic; opacity: 0.95; }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 8px rgba(129,199,132,0.8); transform: translateY(0px); }
+    to   { text-shadow: 0 0 22px rgba(200,230,201,0.95); transform: translateY(-2px); }
+  }
+
+  nav {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:0.6rem;
+    padding:0.6rem;
+    background: var(--green-400);
+  }
+  nav button {
+    background:white;
+    border:none;
+    padding:0.55rem 1rem;
+    border-radius:22px;
+    cursor:pointer;
+    font-weight:600;
+    transition:all .18s ease;
+  }
+  nav button:hover { background:var(--accent); color:white; transform:translateY(-2px); }
+
+  main { padding:1.6rem; max-width:1100px; margin:0 auto; }
+
+  section { display:none; animation:fade 0.35s ease; }
+  section.active { display:block; }
+  @keyframes fade { from {opacity:0} to {opacity:1} }
+
+  /* home layout */
+  .home-grid {
+    display:grid;
+    gap:1rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+    margin-top:1rem;
+  }
+  .card {
+    background:#f1f8e9;
+    border-radius:10px;
+    padding:1.1rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+  }
+  .card h3 { margin:0 0 .5rem; color:var(--green-700); }
+
+  /* inputs + buttons */
+  input[type=number], input[type=text] {
+    padding:0.55rem;
+    margin:.35rem 0;
+    border-radius:8px;
+    border:1px solid #cfd8cb;
+    width:220px;
+    box-sizing:border-box;
+  }
+  button.primary {
+    background:var(--accent);
+    border:none;
+    color:white;
+    padding:0.5rem 0.9rem;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:0.5rem;
+    font-weight:600;
+  }
+  button.primary:hover { opacity:0.95; transform:translateY(-1px); }
+
+  .result { margin-top:0.8rem; font-weight:700; color:#1b5e20; }
+
+  .progress-bar {
+    background:#c8e6c9;
+    height:18px;
+    border-radius:18px;
+    overflow:hidden;
+    margin-top:0.7rem;
+  }
+  .progress { height:100%; width:0%; background:var(--accent); transition:width .4s ease; }
+
+  .info-box {
+    background:#fff;
+    padding:0.9rem;
+    border-left:6px solid var(--green-700);
+    border-radius:8px;
+    margin-top:0.9rem;
+  }
+
+  canvas {
+    width:100% !important;
+    height:300px !important;
+    border-radius:8px;
+    background: #f9fff9;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    display:block;
+  }
+
+  /* quiz */
+  .quiz-answers { display:flex; flex-direction:column; gap:0.6rem; margin-top:0.6rem; }
+  .quiz-answers button { padding:0.55rem; border-radius:8px; border:none; background:#e8f5e9; cursor:pointer; font-weight:600; }
+  .quiz-answers button:hover { background:var(--accent); color:white; }
+
+  footer {
+    text-align:center;
+    padding:1rem;
+    background:var(--green-700);
+    color:white;
+    margin-top:1.8rem;
+  }
+
+  /* small screens */
+  @media (max-width:420px) {
+    input[type=number], input[type=text] { width:100%; }
+  }
+
+  /* emoji tips list */
+  .emoji-tips li { margin:0.4rem 0; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>EcoChem Tracker 🌿</h1>
+    <p>Green Chemistry for a Sustainable Future — STREAM-ready</p>
+  </header>
+
+  <nav>
+    <button onclick="showSection('home')">🏠 Home</button>
+    <button onclick="showSection('calculator')">⚗️ Calculator</button>
+    <button onclick="showSection('simulator')">🧪 Simulator</button>
+    <button onclick="showSection('quiz')">🧠 Quiz</button>
+    <button onclick="showSection('info')">🔬 STREAM Info</button>
+    <button onclick="showSection('tips')">🌎 Eco Tips</button>
+  </nav>
+
+  <main>
+    <section id="home" class="active">
+      <h2>Welcome to EcoChem Tracker</h2>
+      <p>Explore how chemistry and technology work together to protect our planet. Use the tools below to simulate reactions, calculate carbon footprints, visualize data, and test your knowledge.</p>
+
+      <div class="home-grid">
+        <div class="card">
+          <h3>♻️ Mission</h3>
+          <p>Inspire students to combine Science, Technology, Reading/Research, Engineering, Art, and Math (STREAM) to solve sustainability challenges.</p>
+        </div>
+
+        <div class="card">
+          <h3>🔬 What you'll learn</h3>
+          <ul>
+            <li>How reactions produce byproducts and emissions</li>
+            <li>How to estimate carbon cost of a reaction</li>
+            <li>How data visualization helps decision-making</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>🌍 Why sustainability matters</h3>
+          <p>Learning about sustainability helps preserve ecosystems, reduce pollution, and support long-term human wellbeing. Small lab choices (like selecting greener solvents or using catalysts) can scale into large environmental benefits.</p>
+        </div>
+      </div>
+
+      <div class="info-box" aria-live="polite">
+        <strong>Tip:</strong> Start at "Calculator" to enter values and build a dataset for your presentation. Each calculation adds a new bar to the chart so you can compare runs.
+      </div>
+    </section>
+
+    <section id="calculator">
+      <h2>Carbon Footprint Calculator</h2>
+      <p>Estimate a reaction's carbon footprint and track multiple runs in the chart below.</p>
+
+      <div>
+        <label for="energy">Energy used (kWh)</label><br/>
+        <input id="energy" type="number" min="0" step="0.01" placeholder="e.g., 12.5">
+      </div>
+      <div>
+        <label for="waste">Waste produced (kg)</label><br/>
+        <input id="waste" type="number" min="0" step="0.01" placeholder="e.g., 0.5">
+      </div>
+
+      <div>
+        <button class="primary" onclick="calculateFootprint()">Calculate & Add to Chart</button>
+      </div>
+
+      <div class="result" id="result" aria-live="polite"></div>
+      <div class="progress-bar" aria-hidden="false"><div class="progress" id="progress"></div></div>
+
+      <!-- Chart container -->
+      <canvas id="footprintChart" aria-label="Carbon footprint chart" role="img"></canvas>
+
+      <div style="margin-top:.8rem; font-size:.95rem; color:#40573a;">
+        <em>Tip:</em> Bars are color-coded: green = low, yellow = medium, red = high emissions.
+      </div>
+    </section>
+
+    <section id="simulator">
+      <h2>Reaction Simulator</h2>
+      <p>Type element symbols (e.g., H, O, Na) and click simulate to see a friendly description of a reaction.</p>
+
+      <div>
+        <input id="element1" type="text" placeholder="Element 1 (e.g., H)" maxlength="3" />
+        <input id="element2" type="text" placeholder="Element 2 (e.g., O)" maxlength="3" />
+      </div>
+      <div>
+        <button class="primary" onclick="simulateReaction()">Simulate</button>
+      </div>
+
+      <div class="result" id="reactionResult" aria-live="polite"></div>
+    </section>
+
+    <section id="quiz">
+      <h2>Green Chemistry Quiz</h2>
+      <p id="questionText" style="font-weight:600; margin-top:.4rem;"></p>
+
+      <div class="quiz-answers" id="answers" aria-live="polite"></div>
+
+      <div class="result" id="quizResult" style="margin-top:.6rem;"></div>
+
+      <div class="progress-bar" style="margin-top:.6rem;"><div class="progress" id="quizProgress"></div></div>
+
+      <div style="margin-top:0.8rem;">
+        <button class="primary" onclick="resetQuiz()">Restart Quiz</button>
+      </div>
+    </section>
+
+    <section id="info">
+      <h2>🔬 STREAM Info — In-depth</h2>
+
+      <div class="info-box"><strong>Science</strong>
+        <p>Green chemistry focuses on designing chemical products and processes that reduce or eliminate hazardous substances. Key ideas include atom economy, safer solvents, and designing for degradation.</p>
+      </div>
+
+      <div class="info-box"><strong>Technology</strong>
+        <p>Tools like sensors, simulations, and data visualization (this app uses Chart.js) help scientists measure emissions, model reactions, and optimize processes before physical experiments.</p>
+      </div>
+
+      <div class="info-box"><strong>Reading & Research</strong>
+        <p>Effective research means evaluating primary literature, reviewing reliable government and academic sources, and comparing experimental methods and their environmental impact. Record sources and cite them in your project handout.</p>
+      </div>
+
+      <div class="info-box"><strong>Engineering</strong>
+        <p>Engineers design reactors and processes that maximize yield and minimize energy use. Examples: continuous-flow reactors, heat recovery systems, and reactor scaling methods that reduce waste.</p>
+      </div>
+
+      <div class="info-box"><strong>Art & Communication</strong>
+        <p>Visual design and storytelling make science accessible. Use infographics, clear color schemes, and animations (like the title) to explain complex ideas to judges and peers.</p>
+      </div>
+
+      <div class="info-box"><strong>Math & Data</strong>
+        <p>Quantitative skills are essential: calculating yields, carbon footprints, percent error, uncertainty, and visualizing results. Charts and trend lines turn numbers into persuasive evidence.</p>
+      </div>
+
+      <div class="info-box"><strong>Ethics & Impact</strong>
+        <p>Consider the social and environmental implications of chemical choices. Safer alternatives can improve public health, reduce cleanup costs, and support sustainable economies.</p>
+      </div>
+
+      <div class="info-box"><strong>Careers & Skills</strong>
+        <p>Fields that use green chemistry: sustainable materials, environmental engineering, renewable energy, regulatory science, and sustainable product design. Skills: data analysis, lab safety, coding for data tools, and science communication.</p>
+      </div>
+
+      <div class="info-box"><strong>Project Ideas</strong>
+        <ul>
+          <li>Compare carbon footprints of two synthesis routes using the calculator and chart.</li>
+          <li>Design a poster linking atom economy to waste reduction with visuals.</li>
+          <li>Prototype a small "green" solvent substitution and measure differences.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="tips">
+      <h2>Eco Tips & Innovations</h2>
+      <ul class="emoji-tips">
+        <li>♻️ Use catalysts to reduce energy consumption in reactions.</li>
+        <li>🌱 Replace toxic solvents with water or bio-based alternatives.</li>
+        <li>☀️ Harness solar energy for chemical synthesis.</li>
+        <li>💧 Design biodegradable materials to reduce pollution.</li>
+        <li>🌍 Support green chemistry education and awareness.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>© 2025 EcoChem Tracker | STREAM Project</footer>
+
+<script>
+/* ========= State ========= */
+let chart = null;
+const footprints = []; // numeric values (unused by the restored calculator)
+let quizIndex = 0;
+let quizScore = 0;
+
+/* ========= Quiz data (expanded) ========= */
+const quizData = [
+  { question: "Which is a principle of green chemistry?", answers: ["Use renewable feedstocks", "Increase waste"], correct: 0 },
+  { question: "Which energy source is sustainable?", answers: ["Solar", "Coal"], correct: 0 },
+  { question: "Which solvent is eco-friendly?", answers: ["Water", "Benzene"], correct: 0 },
+  { question: "What does atom economy measure?", answers: ["Efficiency of reactant use", "Reaction speed"], correct: 0 },
+  { question: "Which polymer is biodegradable?", answers: ["PLA", "PVC"], correct: 0 },
+  { question: "Which metal is easily and widely recycled?", answers: ["Aluminum", "Mercury"], correct: 0 },
+  { question: "Which reaction releases energy?", answers: ["Exothermic", "Endothermic"], correct: 0 },
+  { question: "What reduces waste in a chemical process?", answers: ["Catalysis", "Burning extra reactants"], correct: 0 }
+];
+
+/* ========= UI Helpers ========= */
+function showSection(id) {
+  document.querySelectorAll('main section').forEach(s => s.classList.remove('active'));
+  const sec = document.getElementById(id);
+  if (!sec) return;
+  sec.classList.add('active');
+
+  // When calculator opened, ensure chart exists and is updated
+  if (id === 'calculator') {
+    ensureChartInitialized();
+    updateChart();
+  }
+
+  // When quiz opened, load current question (or show completed state)
+  if (id === 'quiz') {
+    if (quizIndex < quizData.length) loadQuestion();
+    else showQuizComplete();
+  }
+}
+
+/* ========= Chart functions ========= */
+function ensureChartInitialized() {
+  const canvas = document.getElementById('footprintChart');
+  if (!canvas) return;
+  if (chart) return;
+
+  const ctx = canvas.getContext('2d');
+
+  // Start with a placeholder single bar so axes and grid appear
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['No data yet'],
+      datasets: [{
+        label: 'kg CO₂ Produced',
+        data: [0],
+        backgroundColor: ['#e0e0e0']
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'kg CO₂' } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { mode: 'index', intersect: false }
+      }
+    }
+  });
+}
+
+function emissionColor(value) {
+  const v = Number(value);
+  if (isNaN(v)) return '#66bb6a';
+  if (v < 20) return '#66bb6a';      // green
+  if (v < 50) return '#fdd835';      // yellow-ish
+  return '#e53935';                  // red
+}
+
+function updateChart() {
+  if (!chart) return;
+  if (footprints.length === 0) {
+    chart.data.labels = ['No data yet'];
+    chart.data.datasets[0].data = [0];
+    chart.data.datasets[0].backgroundColor = ['#e0e0e0'];
+  } else {
+    chart.data.labels = footprints.map((_, i) => `Run ${i + 1}`);
+    chart.data.datasets[0].data = footprints.slice();
+    chart.data.datasets[0].backgroundColor = footprints.map(emissionColor);
+  }
+  const maxVal = Math.max(10, ...footprints.map(v => Number(v)));
+  chart.options.scales.y.max = Math.ceil(maxVal * 1.15);
+  chart.update();
+}
+
+/* ========= Calculator ========= */
+/* RESTORED: original carbon footprint code exactly like your initial App */
+function calculateFootprint() {
+  const energy = parseFloat(document.getElementById('energy').value) || 0;
+  const waste = parseFloat(document.getElementById('waste').value) || 0;
+  const footprint = (energy * 0.5 + waste * 2).toFixed(2);
+  document.getElementById('result').innerText = `Estimated Carbon Footprint: ${footprint} kg CO₂`;
+  const progress = Math.min((footprint / 100) * 100, 100);
+  document.getElementById('progress').style.width = `${progress}%`;
+  // NOTE: this restored version DOES NOT push to chart dataset (matches your original)
+}
+
+/* ========= Simulator ========= */
+function simulateReaction() {
+  const e1 = document.getElementById('element1').value.trim().toUpperCase();
+  const e2 = document.getElementById('element2').value.trim().toUpperCase();
+  const out = document.getElementById('reactionResult');
+
+  const known = {
+    "H+O": "💧 You created water (H₂O)!",
+    "O+H": "💧 You created water (H₂O)!",
+    "C+O2": "🔥 You formed carbon dioxide (CO₂), a greenhouse gas.",
+    "O2+C": "🔥 You formed carbon dioxide (CO₂), a greenhouse gas.",
+    "N+H": "🌿 You made ammonia (NH₃), used in fertilizers.",
+    "H+N": "🌿 You made ammonia (NH₃), used in fertilizers.",
+    "NA+CL": "🧂 You made table salt (NaCl)!",
+    "FE+O": "🧲 You formed iron oxide (rust).",
+    "MG+O": "✨ You made magnesium oxide (MgO)."
+  };
+
+  const key = `${e1}+${e2}`;
+  const res = known[key] || known[`${e2}+${e1}`] || "⚗️ No known reaction — try different elements or use correct chemical symbols!";
+  out.innerText = res;
+}
+
+/* ========= Quiz functions ========= */
+function loadQuestion() {
+  if (quizIndex >= quizData.length) return showQuizComplete();
+  const q = quizData[quizIndex];
+  document.getElementById('questionText').innerText = `Q${quizIndex + 1}. ${q.question}`;
+  const answersDiv = document.getElementById('answers');
+  answersDiv.innerHTML = '';
+  q.answers.forEach((ans, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.innerText = ans;
+    btn.onclick = () => checkAnswer(i === q.correct);
+    answersDiv.appendChild(btn);
+  });
+  const progPct = Math.round((quizIndex / quizData.length) * 100);
+  document.getElementById('quizProgress').style.width = `${progPct}%`;
+  document.getElementById('quizResult').innerText = '';
+}
+
+function checkAnswer(isCorrect) {
+  const out = document.getElementById('quizResult');
+  if (isCorrect) {
+    quizScore += 10;
+    out.innerText = '✅ Correct!';
+  } else {
+    out.innerText = '❌ Try again!';
+  }
+  quizIndex++;
+  setTimeout(() => {
+    if (quizIndex < quizData.length) loadQuestion();
+    else showQuizComplete();
+  }, 700);
+}
+
+function showQuizComplete() {
+  document.getElementById('questionText').innerText = 'Quiz Complete!';
+  document.getElementById('answers').innerHTML = '';
+  document.getElementById('quizResult').innerText = `🎉 Your score: ${quizScore} pts`;
+  document.getElementById('quizProgress').style.width = '100%';
+}
+
+function resetQuiz() {
+  quizIndex = 0;
+  quizScore = 0;
+  document.getElementById('quizProgress').style.width = '0%';
+  loadQuestion();
+  showSection('quiz');
+}
+
+/* ========= Initialization ========= */
+window.addEventListener('DOMContentLoaded', () => {
+  // Open home by default (and chart will initialize when user opens calculator)
+  showSection('home');
+});
+</script>
+</body>
+</html>
