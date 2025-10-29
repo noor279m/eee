@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoChem Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom right, #a8e6cf, #dcedc1);
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  header {
+    background-color: #2e7d32;
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+  }
+  nav {
+    display: flex;
+    justify-content: center;
+    background-color: #66bb6a;
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+  nav button {
+    background: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  nav button:hover {
+    background-color: #388e3c;
+    color: white;
+  }
+  section {
+    display: none;
+    padding: 2rem;
+    animation: fadeIn 0.6s ease-in-out;
+  }
+  section.active {
+    display: block;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+  .calculator input, .simulator input {
+    padding: 0.6rem;
+    margin: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 200px;
+  }
+  .result {
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #1b5e20;
+  }
+  .quiz button {
+    margin-top: 1rem;
+    background-color: #81c784;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .quiz button:hover {
+    background-color: #43a047;
+    color: white;
+  }
+  .progress-bar {
+    background-color: #c8e6c9;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 20px;
+    margin-top: 1rem;
+  }
+  .progress {
+    background-color: #43a047;
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+  .eco-tips {
+    background-color: #e8f5e9;
+    border-left: 5px solid #43a047;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-radius: 8px;
+  }
+  footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #388e3c;
+    color: white;
+    margin-top: 2rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>EcoChem Tracker 🌿</h1>
+  <p>Green Chemistry for a Sustainable Future</p>
+</header>
+
+<nav>
+  <button onclick="showSection('home')">🏠 Home</button>
+  <button onclick="showSection('calculator')">⚗️ Calculator</button>
+  <button onclick="showSection('simulator')">🧪 Simulator</button>
+  <button onclick="showSection('quiz')">🧠 Quiz</button>
+  <button onclick="showSection('tips')">🌎 Eco Tips</button>
+</nav>
+
+<section id="home" class="active">
+  <h2>Welcome to EcoChem Tracker</h2>
+  <p>Explore how chemistry can protect our planet! Learn about sustainable reactions, calculate your carbon footprint, and test your eco-knowledge.</p>
+  <div class="eco-tips">
+    <strong>Did you know?</strong> Green chemistry aims to design products and processes that minimize hazardous substances.
+  </div>
+</section>
+
+<section id="calculator" class="calculator">
+  <h2>Carbon Footprint Calculator</h2>
+  <p>Estimate your reaction’s carbon footprint.</p>
+  <input type="number" id="energy" placeholder="Energy used (kWh)">
+  <input type="number" id="waste" placeholder="Waste produced (kg)">
+  <button onclick="calculateFootprint()">Calculate</button>
+  <div class="result" id="result"></div>
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
+</section>
+
+<section id="simulator" class="simulator">
+  <h2>Reaction Simulator</h2>
+  <p>Mix two elements and see what happens!</p>
+  <input type="text" id="element1" placeholder="Element 1 (e.g., H)">
+  <input type="text" id="element2" placeholder="Element 2 (e.g., O)">
+  <button onclick="simulateReaction()">Simulate</button>
+  <div class="result" id="reactionResult"></div>
+</section>
+
+<section id="quiz" class="quiz">
+  <h2>Green Chemistry Quiz</h2>
+  <p id="questionText"></p>
+  <div id="answers"></div>
+  <div class="result" id="quizResult"></div>
+  <div class="progress-bar"><div class="progress" id="quizProgress"></div></div>
+</section>
+
+<section id="tips">
+  <h2>Eco Tips & Innovations</h2>
+  <ul>
+    <li>♻️ Use catalysts to reduce energy consumption in reactions.</li>
+    <li>🌱 Replace toxic solvents with water or bio-based alternatives.</li>
+    <li>☀️ Harness solar energy for chemical synthesis.</li>
+    <li>💧 Design biodegradable materials to reduce pollution.</li>
+    <li>🌍 Support green chemistry education and awareness.</li>
+  </ul>
+</section>
+
+<footer>
+  © 2025 EcoChem Tracker | Designed for Chemistry Fair Projects
+</footer>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function calculateFootprint() {
+    const energy = parseFloat(document.getElementById('energy').value) || 0;
+    const waste = parseFloat(document.getElementById('waste').value) || 0;
+    const footprint = (energy * 0.5 + waste * 2).toFixed(2);
+    document.getElementById('result').innerText = `Estimated Carbon Footprint: ${footprint} kg CO₂`;
+    const progress = Math.min((footprint / 100) * 100, 100);
+    document.getElementById('progress').style.width = `${progress}%`;
+  }
+
+  function simulateReaction() {
+    const e1 = document.getElementById('element1').value.trim().toUpperCase();
+    const e2 = document.getElementById('element2').value.trim().toUpperCase();
+    const result = document.getElementById('reactionResult');
+    const reactions = {
+      "H+O": "💧 You created water (H₂O)!",
+      "C+O": "🌫️ You formed carbon monoxide (CO).",
+      "C+O2": "🔥 You formed carbon dioxide (CO₂), a greenhouse gas.",
+      "N+H": "🌿 You made ammonia (NH₃), used in fertilizers.",
+      "Na+Cl": "🧂 You made table salt (NaCl)!",
+      "Fe+O": "🧲 You formed iron oxide (rust).",
+      "Ca+C": "🪨 You formed calcium carbide (CaC₂), used in lamps.",
+      "H+Cl": "💨 You made hydrogen chloride (HCl), handle with care!",
+      "S+O2": "🌋 You made sulfur dioxide (SO₂), a pollutant gas.",
+      "Mg+O": "✨ You made magnesium oxide (MgO), bright and white!"
+    };
+    const key1 = `${e1}+${e2}`;
+    const key2 = `${e2}+${e1}`;
+    result.innerText = reactions[key1] || reactions[key2] || "⚗️ No known reaction — try different elements!";
+  }
+
+  const quizData = [
+    { question: "Which of these is a principle of green chemistry?", answers: ["Use renewable feedstocks", "Increase waste output"], correct: 0 },
+    { question: "What is the goal of green chemistry?", answers: ["Reduce pollution", "Increase toxicity"], correct: 0 },
+    { question: "Which solvent is eco-friendly?", answers: ["Water", "Benzene"], correct: 0 },
+    { question: "What does atom economy measure?", answers: ["Efficiency of reactant use", "Reaction speed"], correct: 0 },
+    { question: "Which energy source is sustainable?", answers: ["Solar", "Coal"], correct: 0 },
+    { question: "Which gas contributes most to global warming?", answers: ["Carbon dioxide", "Oxygen"], correct: 0 },
+    { question: "What is a biodegradable polymer?", answers: ["PLA", "PVC"], correct: 0 },
+    { question: "Which process reduces waste?", answers: ["Catalysis", "Combustion"], correct: 0 },
+    { question: "What is the main goal of recycling?", answers: ["Reduce resource use", "Increase waste"], correct: 0 },
+    { question: "Which of these is a renewable resource?", answers: ["Biomass", "Petroleum"], correct: 0 }
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+
+  function loadQuestion() {
+    const q = quizData[currentQuestion];
+    document.getElementById('questionText').innerText = q.question;
+    const answersDiv = document.getElementById('answers');
+    answersDiv.innerHTML = '';
+    q.answers.forEach((ans, i) => {
+      const btn = document.createElement('button');
+      btn.innerText = ans;
+      btn.onclick = () => checkAnswer(i === q.correct);
+      answersDiv.appendChild(btn);
+    });
+    document.getElementById('quizProgress').style.width = `${(currentQuestion / quizData.length) * 100}%`;
+  }
+
+  function checkAnswer(correct) {
+    const result = document.getElementById('quizResult');
+    if (correct) {
+      score += 10;
+      result.innerText = "✅ Correct!";
+    } else {
+      result.innerText = "❌ Try again!";
+    }
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      setTimeout(loadQuestion, 1000);
+    } else {
+      document.getElementById('quizProgress').style.width = "100%";
+      result.innerText = `🎉 Quiz complete! Your score: ${score} pts`;
+    }
+  }
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
