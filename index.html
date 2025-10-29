@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoChem Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom right, #a8e6cf, #dcedc1);
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+
+  /* 🌿 Title Animation */
+  header {
+    background-color: #2e7d32;
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+    animation: fadeGlow 3s ease-in-out infinite alternate;
+  }
+  @keyframes fadeGlow {
+    from { text-shadow: 0 0 10px #81c784; }
+    to { text-shadow: 0 0 25px #c8e6c9; }
+  }
+
+  header p {
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-color: #66bb6a;
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+  nav button {
+    background: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  nav button:hover {
+    background-color: #388e3c;
+    color: white;
+  }
+
+  section {
+    display: none;
+    padding: 2rem;
+    animation: fadeIn 0.6s ease-in-out;
+  }
+  section.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  .calculator input {
+    padding: 0.6rem;
+    margin: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 200px;
+  }
+
+  .result {
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #1b5e20;
+  }
+
+  .quiz button {
+    margin-top: 1rem;
+    background-color: #81c784;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .quiz button:hover {
+    background-color: #43a047;
+    color: white;
+  }
+
+  .progress-bar {
+    background-color: #c8e6c9;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 20px;
+    margin-top: 1rem;
+  }
+  .progress {
+    background-color: #43a047;
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+
+  .eco-tips {
+    background-color: #e8f5e9;
+    border-left: 5px solid #43a047;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-radius: 8px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #388e3c;
+    color: white;
+    margin-top: 2rem;
+  }
+
+  .info-box {
+    background-color: #f1f8e9;
+    border-left: 5px solid #2e7d32;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+  }
+
+  .links a {
+    display: block;
+    color: #2e7d32;
+    margin: 0.3rem 0;
+    text-decoration: none;
+  }
+
+  .links a:hover { text-decoration: underline; }
+
+  /* 🏠 Home Layout */
+  .home-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .home-card {
+    background: #f1f8e9;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  .home-card h3 {
+    color: #2e7d32;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>EcoChem Tracker 🌿</h1>
+  <p>Green Chemistry for a Sustainable Future</p>
+</header>
+
+<nav>
+  <button onclick="showSection('home')">🏠 Home</button>
+  <button onclick="showSection('calculator')">⚗️ Calculator</button>
+  <button onclick="showSection('simulator')">🧪 Simulator</button>
+  <button onclick="showSection('quiz')">🧠 Quiz</button>
+  <button onclick="showSection('info')">🔬 STREAM Info</button>
+  <button onclick="showSection('tips')">🌎 Eco Tips</button>
+</nav>
+
+<section id="home" class="active">
+  <h2>Welcome to EcoChem Tracker</h2>
+  <p>Explore how chemistry and technology come together to protect our planet. This app blends science, math, and innovation to make sustainability interactive and fun.</p>
+
+  <div class="home-content">
+    <div class="home-card">
+      <h3>♻️ Sustainability</h3>
+      <p>Discover how small chemical choices can have a big impact on global waste and emissions.</p>
+    </div>
+    <div class="home-card">
+      <h3>🔬 Interactive Learning</h3>
+      <p>Use the simulator to explore how different elements react and learn their real-world applications.</p>
+    </div>
+    <div class="home-card">
+      <h3>📊 Real Data</h3>
+      <p>Calculate your reaction’s carbon footprint and watch it appear in a live data chart below!</p>
+    </div>
+  </div>
+
+  <div class="eco-tips">
+    <strong>Mission:</strong> To inspire students to connect Chemistry with Ecology, Engineering, Art, and Math for a cleaner future.
+  </div>
+</section>
+
+<section id="calculator" class="calculator">
+  <h2>Carbon Footprint Calculator</h2>
+  <p>Estimate your reaction’s carbon footprint.</p>
+  <input type="number" id="energy" placeholder="Energy used (kWh)">
+  <input type="number" id="waste" placeholder="Waste produced (kg)">
+  <button onclick="calculateFootprint()">Calculate</button>
+  <div class="result" id="result"></div>
+  <div class="progress-bar"><div class="progress" id="progress"></div></div>
+
+  <canvas id="footprintChart" width="400" height="200" style="margin-top:2rem;"></canvas>
+</section>
+
+<section id="simulator" class="simulator">
+  <h2>Reaction Simulator</h2>
+  <p>Mix two elements and see what happens!</p>
+  <input type="text" id="element1" placeholder="Element 1 (e.g., H)">
+  <input type="text" id="element2" placeholder="Element 2 (e.g., O)">
+  <button onclick="simulateReaction()">Simulate</button>
+  <div class="result" id="reactionResult"></div>
+</section>
+
+<section id="quiz" class="quiz">
+  <h2>Green Chemistry Quiz</h2>
+  <p id="questionText"></p>
+  <div id="answers"></div>
+  <div class="result" id="quizResult"></div>
+  <div class="progress-bar"><div class="progress" id="quizProgress"></div></div>
+</section>
+
+<section id="info">
+  <h2>🔬 STREAM Connections</h2>
+  <div class="info-box">
+    <h3>Science 🌱</h3>
+    <p>Green chemistry minimizes waste and focuses on renewable materials. It connects chemistry with biology and environmental science.</p>
+  </div>
+  <div class="info-box">
+    <h3>Technology 💻</h3>
+    <p>This app uses JavaScript and Chart.js to calculate, visualize, and simulate — linking coding with environmental awareness.</p>
+  </div>
+  <div class="info-box">
+    <h3>Engineering ⚙️</h3>
+    <p>Engineers design efficient chemical systems that reduce emissions and conserve resources.</p>
+  </div>
+  <div class="info-box">
+    <h3>Art & Design 🎨</h3>
+    <p>Nature-inspired colors and animations remind us that creativity and sustainability go hand in hand.</p>
+  </div>
+  <div class="info-box">
+    <h3>Math 📊</h3>
+    <p>Math helps us measure reaction efficiency and visualize CO₂ data using interactive charts.</p>
+  </div>
+  <div class="info-box">
+    <h3>Research & Reading 📚</h3>
+    <div class="links">
+      <a href="https://www.epa.gov/greenchemistry" target="_blank">EPA Green Chemistry</a>
+      <a href="https://www.un.org/sustainabledevelopment/" target="_blank">UN Sustainability Goals</a>
+      <a href="https://pubs.acs.org/journal/gc" target="_blank">ACS Green Chemistry Journal</a>
+    </div>
+  </div>
+</section>
+
+<section id="tips">
+  <h2>Eco Tips & Innovations</h2>
+  <ul>
+    <li>♻️ Use catalysts to reduce energy consumption in reactions.</li>
+    <li>🌱 Replace toxic solvents with water or bio-based alternatives.</li>
+    <li>☀️ Harness solar energy for chemical synthesis.</li>
+    <li>💧 Design biodegradable materials to reduce pollution.</li>
+    <li>🌍 Support green chemistry education and awareness.</li>
+  </ul>
+</section>
+
+<footer>
+  © 2025 EcoChem Tracker | A STREAM Innovation Project 🌿
+</footer>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // 🌿 Chart Setup
+  let chart;
+  function createChart(value) {
+    const ctx = document.getElementById('footprintChart');
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Carbon Footprint'],
+        datasets: [{
+          label: 'kg CO₂ Produced',
+          data: [value],
+          backgroundColor: '#66bb6a'
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  function calculateFootprint() {
+    const energy = parseFloat(document.getElementById('energy').value) || 0;
+    const waste = parseFloat(document.getElementById('waste').value) || 0;
+    const footprint = (energy * 0.5 + waste * 2).toFixed(2);
+    document.getElementById('result').innerText = `Estimated Carbon Footprint: ${footprint} kg CO₂`;
+    const progress = Math.min((footprint / 100) * 100, 100);
+    document.getElementById('progress').style.width = `${progress}%`;
+    createChart(footprint);
+  }
+
+  function simulateReaction() {
+    const e1 = document.getElementById('element1').value.trim().toUpperCase();
+    const e2 = document.getElementById('element2').value.trim().toUpperCase();
+    const result = document.getElementById('reactionResult');
+    const reactions = {
+      "H+O": "💧 You created water (H₂O)!",
+      "C+O": "🌫️ You formed carbon monoxide (CO).",
+      "C+O2": "🔥 You formed carbon dioxide (CO₂), a greenhouse gas.",
+      "N+H": "🌿 You made ammonia (NH₃), used in fertilizers.",
+      "Na+Cl": "🧂 You made table salt (NaCl)!",
+      "Fe+O": "🧲 You formed iron oxide (rust).",
+      "Mg+O": "✨ You made magnesium oxide (MgO), bright and white!",
+      "H+Cl": "💨 You made hydrogen chloride (HCl), handle with care!",
+      "S+O2": "🌋 You made sulfur dioxide (SO₂), a pollutant gas.",
+      "N+O": "⚡ You made nitrogen oxide (NO), formed in lightning!"
+    };
+    const key1 = `${e1}+${e2}`;
+    const key2 = `${e2}+${e1}`;
+    result.innerText = reactions[key1] || reactions[key2] || "⚗️ No known reaction — try different elements!";
+  }
+
+  // Quiz Data
+  const quizData = [
+    { question: "Which is a principle of green chemistry?", answers: ["Use renewable feedstocks", "Increase waste"], correct: 0 },
+    { question: "Which energy source is sustainable?", answers: ["Solar", "Coal"], correct: 0 },
+    { question: "Which solvent is eco-friendly?", answers: ["Water", "Benzene"], correct: 0 },
+    { question: "What is atom economy?", answers: ["Efficiency of reactant use", "Reaction speed"], correct: 0 }
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+
+  function loadQuestion() {
+    const q = quizData[currentQuestion];
+    document.getElementById('questionText').innerText = q.question;
+    const answersDiv = document.getElementById('answers');
+    answersDiv.innerHTML = '';
+    q.answers.forEach((ans, i) => {
+      const btn = document.createElement('button');
+      btn.innerText = ans;
+      btn.onclick = () => checkAnswer(i === q.correct);
+      answersDiv.appendChild(btn);
+    });
+    document.getElementById('quizProgress').style.width = `${(currentQuestion / quizData.length) * 100}%`;
+  }
+
+  function checkAnswer(correct) {
+    const result = document.getElementById('quizResult');
+    if (correct) {
+      score += 10;
+      result.innerText = "✅ Correct!";
+    } else {
+      result.innerText = "❌ Try again!";
+    }
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
+      setTimeout(loadQuestion, 1000);
+    } else {
+      document.getElementById('quizProgress').style.width = "100%";
+      result.innerText = `🎉 Quiz complete! Your score: ${score} pts`;
+    }
+  }
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
